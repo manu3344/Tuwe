@@ -1,9 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
+from pymongo import MongoClient
 
 websitesLists = [
     "https://centralgps.com.mx/", 
-    "https://www.lala.com.mx/"
+    "https://www.lala.com.mx/", 
 ]
 
 def fetch_and_extract_text(url, filename):
@@ -22,6 +23,13 @@ def fetch_and_extract_text(url, filename):
         return extracted_text
     else:
         return f"Error: No puede obtenerse datos de: {url}"
+    
+def print_mongo_values(): 
+    client = MongoClient("mongodb://localhost:27017/")
+    db = client["websiteLists"]
+    collection = db["websites"]
+    for website in collection.find():
+        print(website)
 
 if __name__ == "__main__":
     for index, url in enumerate(websitesLists):
@@ -29,3 +37,6 @@ if __name__ == "__main__":
         filename = f"extracted_text_{index+1}.txt"
         extracted_text = fetch_and_extract_text(url, filename)
         print("Texto extraído:")
+
+    print("Valores de la base de datos:")
+    print_mongo_values()
